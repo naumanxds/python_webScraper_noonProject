@@ -14,7 +14,7 @@ INCREMENT_ONE = 1
 SLEEP_SEC = 1
 
 # create file with time attached to it for safty purposes
-fHandle = open('csvFileCreatedAt-' + datetime.now().strftime("%H-%M-%S") + '.csv', 'w')
+fHandle = open('csvFileCreatedAt-' + datetime.now().strftime('%H-%M-%S') + '.csv', 'w')
 
 # write in file
 def writeFile(data):
@@ -34,45 +34,47 @@ def iterateLinks(subLinks):
 	for l in subLinks:
 		sku = l.get('href').split('/')[-2]
 		subHtml = getHtml(BASE_URL + l.get('href'))
-		img = subHtml.find('img', {"alt":"noon-now"})
+		img = subHtml.find('img', {'alt':'noon-now'})
 		# check for now badge
 		if str(img) == NOT_FOUND:
 			now = ''
 		else:
 			now = 'Now'
 
-		p = subHtml.find('p', {"class":"sellerName"})
-		myStore = p.findChild('a').get_text()
-		myOffer = subHtml.find('span', {"class":"sellingPrice"}).get_text()
+		p = subHtml.find('p', {'class':'sellerName'})
+		myOffer = subHtml.find('span', {'class':'sellingPrice'}).get_text()
 		myOffer = float(myOffer.split('AED ')[1])
+		otherOffer = subHtml.find('span', {'class':'lowestPrice'}).get_text()
+		if str(otherOffer) != NOT_FOUND:
+			otherOffer = myOffer - float(otherOffer.split('AED ')[1])
 
 		subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
-		p = subHtml.find('p', {"class":"sellerName"})
+		p = subHtml.find('p', {'class':'sellerName'})
 		buyboxStoreName = p.findChild('a').get_text()
-		buyboxPrice = subHtml.find('span', {"class":"sellingPrice"}).get_text()
+		buyboxPrice = subHtml.find('span', {'class':'sellingPrice'}).get_text()
 		buyboxPrice = float(buyboxPrice.split('AED ')[1])
-		writeFile([sku, myStore, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, now])
+		writeFile([sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, now])
 
 # input for user
 startUrl = input('Please Enter Starting Point for Scrapper: ')
 print('=== Starting Scrapping ===')
 writeFile([
 	'SKU',
-	'Our Stor Name',
 	'Our Offer',
 	'BuyBox Seller Store Name',
 	'BuyBox Seller Offer',
 	'Difference with BuyBox Seller',
+	'Difference with Other Offer',
 	'Now Field',
 ])
 count = START_PAGE_NO
 while count <= 50:
 	# stop if error before 50 iterations
 	productsPage = getHtml(startUrl + '?&page=' + str(count))
-	if str(productsPage.find('p', {"class":"heading"})) != NOT_FOUND:
+	if str(productsPage.find('p', {'class':'heading'})) != NOT_FOUND:
 		break
 
-	iterateLinks(productsPage.find_all('a', {"class":"product"}))
+	iterateLinks(productsPage.find_all('a', {'class':'product'}))
 	print(str(count) + ' == Pages Done')
 	count += INCREMENT_ONE
 	time.sleep(SLEEP_SEC)
