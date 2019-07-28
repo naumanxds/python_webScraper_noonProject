@@ -73,6 +73,7 @@ while count <= 50:
 		break
 
 	iterateLinks(productsPage.find_all('a', {"class":"product"}))
+	print(str(count) + ' == Pages Done')
 	count += INCREMENT_ONE
 	time.sleep(SLEEP_SEC)
 
