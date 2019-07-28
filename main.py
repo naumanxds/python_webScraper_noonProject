@@ -44,12 +44,14 @@ def iterateLinks(subLinks):
 		p = subHtml.find('p', {"class":"sellerName"})
 		sellerWithLink = p.findChild('a').get_text()
 		priceWithLink = subHtml.find('span', {"class":"sellingPrice"}).get_text()
+		priceWithLink = float(priceWithLink.split('AED ')[1])
 
 		subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
 		p = subHtml.find('p', {"class":"sellerName"})
 		sellerWithoutLink = p.findChild('a').get_text()
 		priceWithoutLink = subHtml.find('span', {"class":"sellingPrice"}).get_text()
-		writeFile([sku, sellerWithLink, priceWithLink, sellerWithoutLink, priceWithoutLink, now])
+		priceWithoutLink = float(priceWithoutLink.split('AED ')[1])
+		writeFile([sku, sellerWithLink, priceWithLink, sellerWithoutLink, priceWithoutLink, priceWithLink - priceWithoutLink, now])
 
 # input for user
 startUrl = input('Please Enter Starting Point for Scrapper: ')
