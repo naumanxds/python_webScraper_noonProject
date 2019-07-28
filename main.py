@@ -42,20 +42,29 @@ def iterateLinks(subLinks):
 			now = 'Now'
 
 		p = subHtml.find('p', {"class":"sellerName"})
-		sellerWithLink = p.findChild('a').get_text()
-		priceWithLink = subHtml.find('span', {"class":"sellingPrice"}).get_text()
-		priceWithLink = float(priceWithLink.split('AED ')[1])
+		myStore = p.findChild('a').get_text()
+		myOffer = subHtml.find('span', {"class":"sellingPrice"}).get_text()
+		myOffer = float(myOffer.split('AED ')[1])
 
 		subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
 		p = subHtml.find('p', {"class":"sellerName"})
-		sellerWithoutLink = p.findChild('a').get_text()
-		priceWithoutLink = subHtml.find('span', {"class":"sellingPrice"}).get_text()
-		priceWithoutLink = float(priceWithoutLink.split('AED ')[1])
-		writeFile([sku, sellerWithLink, priceWithLink, sellerWithoutLink, priceWithoutLink, priceWithLink - priceWithoutLink, now])
+		buyboxStoreName = p.findChild('a').get_text()
+		buyboxPrice = subHtml.find('span', {"class":"sellingPrice"}).get_text()
+		buyboxPrice = float(buyboxPrice.split('AED ')[1])
+		writeFile([sku, myStore, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, now])
 
 # input for user
 startUrl = input('Please Enter Starting Point for Scrapper: ')
 print('=== Starting Scrapping ===')
+writeFile([
+	'SKU',
+	'Our Stor Name',
+	'Our Offer',
+	'BuyBox Seller Store Name',
+	'BuyBox Seller Offer',
+	'Difference with BuyBox Seller',
+	'Now Field',
+])
 count = START_PAGE_NO
 while count <= 50:
 	# stop if error before 50 iterations
