@@ -49,9 +49,7 @@ def iterateLinks(subLinks):
 		p = subHtml.find('p', {"class":"sellerName"})
 		sellerWithoutLink = p.findChild('a').get_text()
 		priceWithoutLink = subHtml.find('span', {"class":"sellingPrice"}).get_text()
-
-		writeFile([sku, sellerWithLink, priceWithLink, now, sellerWithoutLink, priceWithoutLink])
-		time.sleep(SLEEP_SEC)
+		writeFile([sku, sellerWithLink, priceWithLink, sellerWithoutLink, priceWithoutLink, now])
 
 # input for user
 startUrl = input('Please Enter Starting Point for Scrapper: ')
@@ -60,11 +58,12 @@ count = START_PAGE_NO
 while count <= 50:
 	# stop if error before 50 iterations
 	productsPage = getHtml(startUrl + '?&page=' + str(count))
-	if str(productsPage.find('p', {"class":"heading"})) == NOT_FOUND:
+	if str(productsPage.find('p', {"class":"heading"})) != NOT_FOUND:
 		break
 
 	iterateLinks(productsPage.find_all('a', {"class":"product"}))
 	count += INCREMENT_ONE
+	time.sleep(SLEEP_SEC)
 
 # close file
 fHandle.close()
