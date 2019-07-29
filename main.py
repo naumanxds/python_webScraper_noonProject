@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 
 # constants used in code
 BASE_URL = 'https://www.noon.com'
-START_PAGE_NO = 1
 NOT_FOUND = 'None'
 INCREMENT_ONE = 1
 SLEEP_SEC = 1
@@ -47,9 +46,9 @@ def iterateLinks(subLinks):
 		otherOffer = subHtml.find('span', {'class':'lowestPrice'}).get_text()
 		if str(otherOffer) != NOT_FOUND:
 			otherOffer = myOffer - float(otherOffer.split('AED ')[1])
-		else
-                        otherOffer = myOffer
-                        
+		else:
+			otherOffer = myOffer
+
 		subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
 		p = subHtml.find('p', {'class':'sellerName'})
 		buyboxStoreName = p.findChild('a').get_text()
@@ -58,7 +57,12 @@ def iterateLinks(subLinks):
 		writeFile([sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, now])
 
 # input for user
-startUrl = input('Please Enter Starting Point for Scrapper: ')
+eteredUrl = input('Please Enter Starting Point for Scrapper: ')
+startUrl = eteredUrl.split('page=')[0]
+try:
+	count = eteredUrl.split('page=')[1]
+except:
+	count = 1
 print('=== Starting Scrapping ===')
 writeFile([
 	'SKU',
@@ -69,7 +73,6 @@ writeFile([
 	'Difference with Other Offer',
 	'Now Field',
 ])
-count = START_PAGE_NO
 while count <= 50:
 	# stop if error before 50 iterations
 	productsPage = getHtml(startUrl + '?&page=' + str(count))
