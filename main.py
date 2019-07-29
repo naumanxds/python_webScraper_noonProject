@@ -47,7 +47,9 @@ def iterateLinks(subLinks):
 		otherOffer = subHtml.find('span', {'class':'lowestPrice'}).get_text()
 		if str(otherOffer) != NOT_FOUND:
 			otherOffer = myOffer - float(otherOffer.split('AED ')[1])
-
+		else
+                        otherOffer = myOffer
+                        
 		subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
 		p = subHtml.find('p', {'class':'sellerName'})
 		buyboxStoreName = p.findChild('a').get_text()
