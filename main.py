@@ -40,12 +40,11 @@ def iterateLinks(subLinks):
 		else:
 			now = 'Now'
 
-		p = subHtml.find('p', {'class':'sellerName'})
 		myOffer = subHtml.find('span', {'class':'sellingPrice'}).get_text()
 		myOffer = float(myOffer.split('AED ')[1])
-		otherOffer = subHtml.find('span', {'class':'lowestPrice'}).get_text()
+		otherOffer = subHtml.find('span', {'class':'lowestPrice'})
 		if str(otherOffer) != NOT_FOUND:
-			otherOffer = myOffer - float(otherOffer.split('AED ')[1])
+			otherOffer = myOffer - float((otherOffer.get_text()).split('AED ')[1])
 		else:
 			otherOffer = myOffer
 
@@ -76,7 +75,7 @@ writeFile([
 while count <= 50:
 	# stop if error before 50 iterations
 	productsPage = getHtml(startUrl + '?&page=' + str(count))
-	if str(productsPage.find('p', {'class':'heading'})) != NOT_FOUND:
+	if str(productsPage.find('p', {'class':'heading'})) != NOT_FOUND or productsPage.find_all('a', {'class':'product'}) == NOT_FOUND:
 		break
 
 	iterateLinks(productsPage.find_all('a', {'class':'product'}))
