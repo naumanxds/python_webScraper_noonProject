@@ -34,12 +34,12 @@ def iterateLinks(subLinks):
 		sku = l.get('href').split('/')[-2]
 		try:
 			subHtml = getHtml(BASE_URL + l.get('href'))
-			img = subHtml.find('img', {'alt':'noon-now'})
-			# check for now badge
+			img = subHtml.find('img', {'alt':'noon-express'})
+			# check for express badge
 			if str(img) == NOT_FOUND:
-				now = ''
+				express = ''
 			else:
-				now = 'Now'
+				express = 'Express'
 
 			# getting my offer
 			myOffer = subHtml.find('span', {'class':'sellingPrice'}).get_text()
@@ -60,7 +60,7 @@ def iterateLinks(subLinks):
 			buyboxPrice = subHtml.find('span', {'class':'sellingPrice'}).get_text()
 			buyboxPrice = float(buyboxPrice.split('AED ')[1])
 			# writing data in file
-			writeFile([sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, now])
+			writeFile([sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, express])
 		except:
 			print('		>> Entry missed due to some error for Product SKU = ' + sku)
 
@@ -79,7 +79,7 @@ writeFile([
 	'BuyBox Seller Offer',
 	'Difference with BuyBox Seller',
 	'Difference with Other Offer',
-	'Now Field',
+	'Express Field',
 ])
 while count <= 50:
 	# stop if error before 50 iterations
