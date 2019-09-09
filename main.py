@@ -13,12 +13,17 @@ INCREMENT_ONE = 1
 SLEEP_SEC = 1
 
 # create file with time attached to it for safty purposes
-fHandle = open('csvFileCreatedAt-' + datetime.now().strftime('%H-%M-%S') + '.csv', 'w')
+fHandle = open('csvFileCreatedAt-' + datetime.now().strftime('%H-%M-%S') + '.csv', 'w', encoding="utf-8")
 
 # write in file
-def writeFile(data):
-	csvWriter = csv.writer(fHandle)
-	csvWriter.writerow(data)
+def writeFile(data, url = ''):
+	try:
+		csvWriter = csv.writer(fHandle)
+		csvWriter.writerow(data)
+	except Exception as e:
+		print('		>> Error in Writing Data into the file = ' + url)
+		print(' 	========================================')
+		print('		>> ERRROR => ' + format(e))
 
 # get html of the provided url page
 def getHtml(url):
@@ -60,9 +65,12 @@ def iterateLinks(subLinks):
 			buyboxPrice = subHtml.find('span', {'class':'sellingPrice'}).get_text()
 			buyboxPrice = float(buyboxPrice.split('AED ')[1])
 			# writing data in file
-			writeFile([sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, express])
+			writeFile(
+				[sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, express],
+				BASE_URL + l.get('href')
+			)
 		except:
-			print('		>> Entry missed due to some error for Product SKU = ' + sku)
+			print('		>> Entry missed due to some error for Product SKU => ' + sku)
 
 # input for user
 eteredUrl = input('Please Enter Starting Point for Scrapper: ')
