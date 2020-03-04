@@ -49,6 +49,7 @@ def iterateLinks(subLinks):
 			# getting my offer
 			myOffer = subHtml.find('span', {'class':'sellingPrice'}).get_text()
 			myOffer = float(myOffer.split('AED ')[1])
+
 			# getting other offer
 			otherOffer = subHtml.find('span', {'class':'lowestPrice'})
 			if str(otherOffer) != NOT_FOUND:
@@ -58,17 +59,35 @@ def iterateLinks(subLinks):
 				
 			# creating link for buybox product
 			subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
+
 			# getting buybox seller name
 			p = subHtml.find('p', {'class':'sellerName'})
 			buyboxStoreName = p.findChild('a').get_text()
+
 			# getting buy box seller price
 			buyboxPrice = subHtml.find('span', {'class':'sellingPrice'}).get_text()
 			buyboxPrice = float(buyboxPrice.split('AED ')[1])
+
+			# brand name
+			brandName = subHtml.find('a', {'class' : 'jsx-2771165322 brand'})
+			if str(brandName) != NOT_FOUND:
+				brandName = brandName.get_text()
+			else:
+				brandName = 'Brand Name Not Found'
+
+			# model number
+			modelNum = subHtml.find('p', {'class' : 'jsx-2771165322 modelNumber'})
+			if str(modelNum) != NOT_FOUND:
+				modelNum = modelNum.get_text()
+			else:
+				modelNum = 'Model Not Found'
+
 			# writing data in file
 			writeFile(
-				[sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, express],
+				[sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, express, brandName, modelNum],
 				BASE_URL + l.get('href')
 			)
+
 		except:
 			print('		>> Entry missed due to some error for Product SKU => ' + sku)
 
@@ -88,6 +107,8 @@ writeFile([
 	'Difference with BuyBox Seller',
 	'Difference with Other Offer',
 	'Express Field',
+	'Brand Name',
+	'Model Number'
 ])
 while count <= 50:
 	# stop if error before 50 iterations
