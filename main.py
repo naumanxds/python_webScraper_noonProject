@@ -71,7 +71,7 @@ def iterateLinks(subLinks):
 			# brand name
 			brandName = subHtml.find('a', {'class' : 'jsx-2771165322 brand'})
 			if str(brandName) != NOT_FOUND:
-				brandName = brandName.get_text()
+				brandName = brandName.get_text().split(':')[1]
 			else:
 				brandName = 'Brand Name Not Found'
 
