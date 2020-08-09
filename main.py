@@ -52,8 +52,10 @@ def iterateLinks(subLinks):
 		sku = l.get('href').split('/')[-2]
 		subHtml = getHtml(BASE_URL + l.get('href'))
 		time.sleep(2)
-		img = subHtml.find('img', {'alt':'noon-express'})
+
 		# check for express badge
+		div = subHtml.find('div', {'class':'jsx-2234420881 bottomRow'})
+		img = div.find('img', {'alt':'noon-express'})
 		if str(img) == NOT_FOUND:
 			express = ''
 		else:
