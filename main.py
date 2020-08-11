@@ -49,59 +49,62 @@ def getHtml(url):
 # iterate through the fetched links get price and place in the file
 def iterateLinks(subLinks):
 	for l in subLinks:
-		sku = l.get('href').split('/')[-2]
-		subHtml = getHtml(BASE_URL + l.get('href'))
-		time.sleep(2)
+		try:
+			sku = l.get('href').split('/')[-2]
+			subHtml = getHtml(BASE_URL + l.get('href'))
+			time.sleep(3)
 
-		# check for express badge
-		div = subHtml.find('div', {'class':'jsx-2234420881 bottomRow'})
-		img = div.find('img', {'alt':'noon-express'})
-		if str(img) == NOT_FOUND:
-			express = ''
-		else:
-			express = 'Express'
+			# check for express badge
+			div = subHtml.find('div', {'class':'jsx-2234420881 bottomRow'})
+			img = div.find('img', {'alt':'noon-express'})
+			if str(img) == NOT_FOUND:
+				express = ''
+			else:
+				express = 'Express'
 
-		# getting my offer
-		myOffer = subHtml.find('span', {'class':'sellingPrice'}).get_text()
-		myOffer = float(myOffer.split('AED ')[1])
+			# getting my offer
+			myOffer = subHtml.find('span', {'class':'sellingPrice'}).get_text()
+			myOffer = float(myOffer.split('AED ')[1])
 
-		# getting other offer
-		otherOffer = subHtml.find('span', {'class':'lowestPrice'})
-		if str(otherOffer) != NOT_FOUND:
-			otherOffer = myOffer - float((otherOffer.get_text()).split('AED ')[1])
-		else:
-			otherOffer = myOffer
-			
-		# creating link for buybox product
-		subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
+			# getting other offer
+			otherOffer = subHtml.find('span', {'class':'lowestPrice'})
+			if str(otherOffer) != NOT_FOUND:
+				otherOffer = myOffer - float((otherOffer.get_text()).split('AED ')[1])
+			else:
+				otherOffer = myOffer
 
-		# getting buybox seller name
-		p = subHtml.find('p', {'class':'sellerName'})
-		buyboxStoreName = p.findChild('a').get_text()
+			# creating link for buybox product
+			subHtml = getHtml(BASE_URL + l.get('href').split('?')[0])
 
-		# getting buy box seller price
-		buyboxPrice = subHtml.find('span', {'class':'sellingPrice'}).get_text()
-		buyboxPrice = float(buyboxPrice.split('AED ')[1])
+			# getting buybox seller name
+			p = subHtml.find('p', {'class':'sellerName'})
+			buyboxStoreName = p.findChild('a').get_text()
 
-		# brand name
-		brandName = subHtml.find('a', {'class' : 'jsx-2771165322 brand'})
-		if str(brandName) != NOT_FOUND:
-			brandName = brandName.get_text()
-		else:
-			brandName = 'Brand Name Not Found'
+			# getting buy box seller price
+			buyboxPrice = subHtml.find('span', {'class':'sellingPrice'}).get_text()
+			buyboxPrice = float(buyboxPrice.split('AED ')[1])
 
-		# model number
-		modelNum = subHtml.find('p', {'class' : 'jsx-2771165322 modelNumber'})
-		if str(modelNum) != NOT_FOUND:
-			modelNum = modelNum.get_text()
-		else:
-			modelNum = 'Model Not Found'
+			# brand name
+			brandName = subHtml.find('a', {'class' : 'jsx-2771165322 brand'})
+			if str(brandName) != NOT_FOUND:
+				brandName = brandName.get_text()
+			else:
+				brandName = 'Brand Name Not Found'
 
-		# writing data in file
-		writeFile(
-			[sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, express, brandName, modelNum],
-			BASE_URL + l.get('href')
-		)
+			# model number
+			modelNum = subHtml.find('p', {'class' : 'jsx-2771165322 modelNumber'})
+			if str(modelNum) != NOT_FOUND:
+				modelNum = modelNum.get_text()
+			else:
+				modelNum = 'Model Not Found'
+
+			# writing data in file
+			writeFile(
+				[sku, myOffer, buyboxStoreName, buyboxPrice, myOffer - buyboxPrice, otherOffer, express, brandName, modelNum],
+				BASE_URL + l.get('href')
+			)
+		except Exception as e:
+			print(' >> Entry missed due to missing data >> url >> ' + BASE_URL + l.get('href'))
 
 # initiaget the code
 if __name__ == '__main__':
