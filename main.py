@@ -4,10 +4,7 @@ import time
 import csv
 
 from datetime import datetime
-from selenium import webdriver
 from bs4 import BeautifulSoup
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
 
 # constants used in code
 BASE_URL = 'https://www.noon.com'
@@ -16,12 +13,6 @@ INCREMENT_ONE = 1
 
 # create file with time attached to it for safty purposes
 fHandle = open('csvFileCreatedAt-' + datetime.now().strftime('%H-%M-%S') + '.csv', 'w', encoding="utf-8")
-
-# create browser instance
-browserOptions = Options()
-browserOptions.add_argument("--headless")
-driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=browserOptions)
-driver = webdriver.Chrome(executable_path=ChromeDriverManager().install())
 
 # write in file
 def writeFile(data, url = ''):
@@ -33,18 +24,15 @@ def writeFile(data, url = ''):
 		print(' 	========================================')
 		print('		>> ERRROR => ' + format(e))
 
-# get html of the provided page url
+# get html of the provided url page
 def getHtml(url):
-    try:
-        driver.get(url)
-        driver.execute_script('return document.documentElement.outerHTML')
-        return BeautifulSoup(driver.page_source, 'html.parser')
+	try:
+		response = requests.get(url)
+		return BeautifulSoup(response.text, 'html.parser')
+	except Exception as e:
+		print('Oops! Something went worng fetching the link - ' + format(e))
 
-    except Exception as e:
-        print('     >> Error in Fetching HTML from Url => ' + url)
-        print('     >> ERRROR => ' + format(e))
-
-    return False
+	return False
 
 # iterate through the fetched links get price and place in the file
 def iterateLinks(subLinks):
@@ -136,8 +124,8 @@ if __name__ == '__main__':
 		iterateLinks(productsPage.find_all('a', {'class':'product'}))
 		print(str(count) + ' == Pages Done')
 		count += INCREMENT_ONE
+		time.sleep(1)
 
 	# close file
 	fHandle.close()
-	driver.quit()
 	print('=== Scrapping Finished ===')
